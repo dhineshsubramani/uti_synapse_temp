@@ -49,12 +49,6 @@
 		},
 		"utiadlspoc_properties_typeProperties_url": {
 			"value": "https://rgutistr.dfs.core.windows.net/"
-		},
-		"CDC_properties_typeProperties_scope": {
-			"value": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
-		},
-		"wo_cdc_properties_typeProperties_scope": {
-			"value": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
 		}
 	}
 }

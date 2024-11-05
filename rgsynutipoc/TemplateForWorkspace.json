@@ -67,14 +67,6 @@
 		"utiadlspoc_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://rgutistr.dfs.core.windows.net/"
-		},
-		"CDC_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
-		},
-		"wo_cdc_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
 		}
 	},
 	"variables": {
@@ -470,17 +462,11 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "UTIPOC1",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -556,17 +542,11 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "UTIPOC1",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -640,17 +620,11 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "UTIPOC1",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -680,54 +654,10 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/notebooks/Full Load')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/UTIPOC1')]",
 				"[concat(variables('workspaceId'), '/datasets/Parquet')]",
 				"[concat(variables('workspaceId'), '/notebooks/ADLS')]",
 				"[concat(variables('workspaceId'), '/notebooks/SQL')]",
 				"[concat(variables('workspaceId'), '/linkedServices/rgsynutipoc-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Notebook 1",
-						"type": "SynapseNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebook": {
-								"referenceName": "Notebook 1",
-								"type": "NotebookReference"
-							},
-							"snapshot": true,
-							"conf": {
-								"spark.dynamicAllocation.enabled": null,
-								"spark.dynamicAllocation.minExecutors": null,
-								"spark.dynamicAllocation.maxExecutors": null
-							},
-							"numExecutors": null
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-10-28T15:58:33Z"
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/notebooks/Notebook 1')]"
 			]
 		},
 		{
@@ -763,17 +693,11 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "UTIPOC1",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -849,17 +773,11 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "UTIPOC1",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -1010,7 +928,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/notebooks/WOCDC_FullLoad')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/UTIPOC1')]",
 				"[concat(variables('workspaceId'), '/datasets/Parquet')]",
 				"[concat(variables('workspaceId'), '/notebooks/WOCDC_Incremental')]",
 				"[concat(variables('workspaceId'), '/datasets/SQLDataset_WOCDC')]",
@@ -1632,68 +1549,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CDC')]",
-			"type": "Microsoft.Synapse/workspaces/triggers",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CDC",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/user/blobs/RAW/",
-					"blobPathEndsWith": ".parquet",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('CDC_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/CDC')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/wo_cdc')]",
-			"type": "Microsoft.Synapse/workspaces/triggers",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "WO_CDC",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/user/blobs/RAW_WOCDC/",
-					"blobPathEndsWith": ".parquet",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('wo_cdc_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/WO_CDC')]"
 			]
 		},
 		{
@@ -2508,15 +2363,16 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "9e248ad5-28a3-4262-9e3e-ab3444b856c2"
+						"spark.autotune.trackingId": "ce767b25-bba3-444f-b489-de0dcccb0c16"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
 					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
 					"language_info": {
 						"name": "python"
 					},
@@ -2525,13 +2381,15 @@
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"from pyspark.sql import *\r\n",
 							"from pyspark.sql.functions import *\r\n",
 							"from pyspark.sql.types import *\r\n",
 							"from datetime import datetime"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2550,7 +2408,8 @@
 							"from pyspark.sql import functions as F\r\n",
 							"from pyspark.sql import Window"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2569,7 +2428,8 @@
 							"from pyspark.sql import SparkSession\r\n",
 							"from pyspark.sql import Row"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2587,7 +2447,8 @@
 						"source": [
 							"Campus_df = spark.read.load('abfss://user@rgutistr.dfs.core.windows.net/RAW/*.parquet', format='parquet').filter(col(\"__$operation\") != 3)"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2613,7 +2474,8 @@
 							"                                                                .otherwise(None)).drop(\"__$start_lsn\",\"__$end_lsn\",\"__$seqval\",\"__$operation\",\"__$update_mask\",\"__$command_id\")\\\r\n",
 							"                                                                .withColumn(\"Current_Date\", lit(current_timestamp()))"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2635,7 +2497,8 @@
 							"%%sql\r\n",
 							"CONVERT TO DELTA default.campusdetails;"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2653,7 +2516,8 @@
 						"source": [
 							"df_operation.createOrReplaceTempView(\"new_data_table\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2680,7 +2544,8 @@
 							"                  target.update_date = DATE_SUB(source.creation_date, 1);\r\n",
 							"\"\"\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2702,7 +2567,8 @@
 							"    FROM new_data_table\r\n",
 							"\"\"\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
@@ -2726,15 +2592,16 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8f131c35-f3e8-4aae-8d57-83418dc9e4e1"
+						"spark.autotune.trackingId": "b0814687-88ff-40bf-9a3b-3bca8888bf62"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
 					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
 					"language_info": {
 						"name": "python"
 					},
@@ -2743,6 +2610,7 @@
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"from pyspark.sql import *\n",
 							"from pyspark.sql.functions import *\n",
@@ -2766,152 +2634,8 @@
 							"    .mode(\"overwrite\") \\\n",
 							"    .saveAsTable(f\"default.campusdetails\")"
 						],
-						"outputs": []
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Notebook 1')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "UTIPOC1",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
-					"runAsWorkspaceSystemIdentity": false,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2b1c0eb1-dcf4-4083-8682-52f5c1ffabb5"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
-					"enableDebugMode": false,
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Synapse/workspaces/rgsynutipoc/bigDataPools/UTIPOC1",
-						"name": "UTIPOC1",
-						"type": "Spark",
-						"endpoint": "https://rgsynutipoc.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/UTIPOC1",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net",
-							"authHeader": null
-						},
-						"sparkVersion": "3.4",
-						"nodeCount": 3,
-						"cores": 4,
-						"memory": 28,
-						"extraHeader": null
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "code",
-						"source": [
-							"from pyspark.sql import *\n",
-							"from pyspark.sql.functions import *\n",
-							"from pyspark.sql.types import *\n",
-							"from datetime import datetime"
-						],
-						"outputs": []
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql import functions as F\n",
-							"from pyspark.sql import Window"
-						],
-						"outputs": []
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql import SparkSession\n",
-							"from pyspark.sql import Row"
-						],
-						"outputs": []
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"microsoft": {
-								"language": "sparksql"
-							},
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"%%sql\n",
-							"CONVERT TO DELTA default.campusdetails;"
-						],
-						"outputs": []
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"spark.sql(\"\"\"DROP TABLE default.campusdetails\"\"\")"
-						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
@@ -2935,15 +2659,16 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "a385c985-c4bf-4ac4-b935-51bbbc125890"
+						"spark.autotune.trackingId": "e1962d66-6372-45ea-8688-6a1ce4fbba83"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
 					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
 					"language_info": {
 						"name": "python"
 					},
@@ -2952,6 +2677,7 @@
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"from pyspark.sql import *\r\n",
 							"from pyspark.sql.functions import *\r\n",
@@ -2962,7 +2688,8 @@
 							"from pyspark.sql import SparkSession\r\n",
 							"from pyspark.sql import Row"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -2981,7 +2708,8 @@
 							"df_sql = spark.sql(\"\"\"Select * from default.campusdetails;\"\"\")\r\n",
 							"df_filter = df_sql.filter((col(\"Flag\") == \"Y\") & (col(\"Operations\") != \"DELETE\")).drop(\"Flag\", \"Operations\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3012,7 +2740,8 @@
 							"# Writing the final result dataframes to SQL\r\n",
 							"df_filter.write.format(\"jdbc\").option(\"url\", jdbc_url).option(\"dbtable\", target_table).option(\"user\", jdbc_username).option(\"password\", jdbc_password).mode(\"overwrite\").save()"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
@@ -3036,15 +2765,16 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "b829e7ab-9d44-470d-81cb-888f8f1ed670"
+						"spark.autotune.trackingId": "ede5e611-550a-4766-8c1a-5abb0dcb2315"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
 					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
 					"language_info": {
 						"name": "python"
 					},
@@ -3053,6 +2783,7 @@
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"from pyspark.sql import SparkSession\n",
 							"from pyspark.sql import Row\n",
@@ -3063,7 +2794,8 @@
 							"from pyspark.sql import Window\n",
 							"from datetime import datetime"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3105,7 +2837,8 @@
 							"    .mode(\"overwrite\") \\\n",
 							"    .saveAsTable(f\"demonew.campuslatestnew\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
@@ -3129,15 +2862,16 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "53eabcd1-52ec-4e71-bc3f-83bb8f4af8fe"
+						"spark.autotune.trackingId": "4372a89d-b2d1-422d-bd2c-da974f0a0b7d"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
-					"synapse_widget": {
-						"version": "0.1"
-					},
 					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
 					"language_info": {
 						"name": "python"
 					},
@@ -3146,6 +2880,7 @@
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"from pyspark.sql import SparkSession\n",
 							"from pyspark.sql import Row\n",
@@ -3156,7 +2891,8 @@
 							"from pyspark.sql import Window\n",
 							"from datetime import datetime"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3186,7 +2922,8 @@
 							"df_operation1 = df_sort1.withColumn(\"start_date\", lit(current_date())) \\\n",
 							"                           .withColumn(\"end_date\", expr(\"date_add('9999-12-31', 0)\"))"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3206,7 +2943,8 @@
 							"\"demoWOCDC\"\n",
 							")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3228,7 +2966,8 @@
 							"%%sql\n",
 							"CONVERT TO DELTA demonew.campuslatestnew;"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3255,7 +2994,8 @@
 							"                  target.end_date = DATE_SUB(source.start_date, 1);\n",
 							"\"\"\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -3277,7 +3017,8 @@
 							"    FROM demoWOCDC\n",
 							"\"\"\")"
 						],
-						"outputs": []
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
