@@ -1,0 +1,206 @@
+{
+	"name": "ADLS",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "9e248ad5-28a3-4262-9e3e-ab3444b856c2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import *\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"from datetime import datetime"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql import functions as F\r\n",
+					"from pyspark.sql import Window"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql import SparkSession\r\n",
+					"from pyspark.sql import Row"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Campus_df = spark.read.load('abfss://user@rgutistr.dfs.core.windows.net/RAW/*.parquet', format='parquet').filter(col(\"__$operation\") != 3)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"windowSpec = Window.partitionBy(\"campus_key\", \"campus_code\").orderBy(col(\"__$start_lsn\").desc())\r\n",
+					"df_updated = Campus_df.withColumn(\"Flag\", when(row_number().over(windowSpec) == 1, \"Y\").otherwise(\"N\"))\r\n",
+					"df_sort = df_updated.sort(col(\"__$start_lsn\").asc()) \r\n",
+					"df_operation = df_sort.withColumn(\"Operations\", when(col(\"__$operation\") == 1, \"DELETE\")\r\n",
+					"                                                    .when(col(\"__$operation\") == 2, \"INSERT\")\r\n",
+					"                                                        .when(col(\"__$operation\") == 3, \"BEFORE UPDATE\")\r\n",
+					"                                                            .when(col(\"__$operation\") == 4, \"AFTER UPDATE\")\r\n",
+					"                                                                .otherwise(None)).drop(\"__$start_lsn\",\"__$end_lsn\",\"__$seqval\",\"__$operation\",\"__$update_mask\",\"__$command_id\")\\\r\n",
+					"                                                                .withColumn(\"Current_Date\", lit(current_timestamp()))"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%%sql\r\n",
+					"CONVERT TO DELTA default.campusdetails;"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_operation.createOrReplaceTempView(\"new_data_table\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.sql(\"\"\"\r\n",
+					"              MERGE INTO default.campusdetails AS target\r\n",
+					"              USING (SELECT campus_key, campus_code, update_date, creation_date FROM new_data_table) AS source\r\n",
+					"              ON target.campus_key = source.campus_key\r\n",
+					"              AND target.campus_code = source.campus_code\r\n",
+					"              WHEN MATCHED THEN\r\n",
+					"                UPDATE SET \r\n",
+					"                  target.Flag = 'N',\r\n",
+					"                  target.update_date = DATE_SUB(source.creation_date, 1);\r\n",
+					"\"\"\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.sql(\"\"\"\r\n",
+					"    INSERT INTO default.campusdetails\r\n",
+					"    SELECT campus_key, campus_code, campus_name, mail_id, course, creation_date, update_date, Flag, Operations, Current_Date\r\n",
+					"    FROM new_data_table\r\n",
+					"\"\"\")"
+				]
+			}
+		]
+	}
+}

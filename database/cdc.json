@@ -1,0 +1,25 @@
+{
+	"name": "cdc",
+	"properties": {
+		"Name": "cdc",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://CDC@rgutistr.dfs.core.windows.net/onpremCDC.parquet",
+			"Properties": {
+				"FormatType": "parquet",
+				"LinkedServiceName": "rgsynutipoc-WorkspaceDefaultStorage"
+			}
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 1,
+		"ObjectId": "115e5458-65f6-49a6-90da-16d74ed169f5"
+	},
+	"type": "DATABASE"
+}

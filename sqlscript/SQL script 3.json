@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 3",
+	"properties": {
+		"content": {
+			"query": "CREATE EXTERNAL DATA SOURCE db\nWITH (\n    LOCATION = 'https://rgutistr.dfs.core.windows.net/user/History/2024/10/11/*.parquet'\n);\n\nCREATE EXTERNAL TABLE cdc.campuscdc\n(\n    column1 INT,\n    column2 NVARCHAR(50),\n    column3 DATETIME\n    -- Define all columns according to your Parquet file structure\n)\nWITH (\n    LOCATION = 'https://rgutistr.dfs.core.windows.net/user/History/2024/10/11/*.parquet', \n    DATA_SOURCE = MyDataSource,\n    FILE_FORMAT = ParquetFormat\n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "EmployeeDataLakeDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

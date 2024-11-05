@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 37",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [campus_key]\n,[campus_code]\n,[campus_name]\n,[mail_id]\n,[course]\n,[creation_date]\n,[update_date]\n,[Flag]\n,[Operations]\n,[Current_Date]\n FROM [default].[dbo].[campusdetails]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

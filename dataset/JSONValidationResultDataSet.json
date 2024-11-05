@@ -1,0 +1,46 @@
+{
+	"name": "JSONValidationResultDataSet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "dummyfile.json",
+				"folderPath": "ValidationResults",
+				"container": "saipriyanka"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "null"
+				},
+				"templateId": {
+					"type": "integer"
+				},
+				"ruleName": {
+					"type": "string"
+				},
+				"query": {
+					"type": "string"
+				},
+				"resultStatus": {
+					"type": "string"
+				},
+				"resultData": {
+					"type": "string"
+				},
+				"createdAt": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

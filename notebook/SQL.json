@@ -1,0 +1,95 @@
+{
+	"name": "SQL",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "a385c985-c4bf-4ac4-b935-51bbbc125890"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import *\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"from datetime import datetime\r\n",
+					"from pyspark.sql import functions as F\r\n",
+					"from pyspark.sql import Window\r\n",
+					"from pyspark.sql import SparkSession\r\n",
+					"from pyspark.sql import Row"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_sql = spark.sql(\"\"\"Select * from default.campusdetails;\"\"\")\r\n",
+					"df_filter = df_sql.filter((col(\"Flag\") == \"Y\") & (col(\"Operations\") != \"DELETE\")).drop(\"Flag\", \"Operations\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"jdbc_hostname = \"rgemutipoc.database.windows.net\"\r\n",
+					"jdbc_port = \"1433\"\r\n",
+					"jdbc_database = \"rgemsqlpoc\"\r\n",
+					"jdbc_username = \"sqladmin\"\r\n",
+					"jdbc_password = \"SqlAdpo@\"\r\n",
+					"jdbc_url = f\"jdbc:sqlserver://{jdbc_hostname}:{jdbc_port};database={jdbc_database}\"\r\n",
+					"#-------------------------------------------------------------------------------------------------------------------------------------\r\n",
+					"# Target Table names prefixing with target_table_{table_Name}\r\n",
+					"#-------------------------------------------------------------------------------------------------------------------------------------\r\n",
+					"target_table = '[dbo].[campusdetails]'\r\n",
+					" \r\n",
+					"#-------------------------------------------------------------------------------------------------------------------------------------\r\n",
+					"# Writing the final result dataframes to SQL\r\n",
+					"df_filter.write.format(\"jdbc\").option(\"url\", jdbc_url).option(\"dbtable\", target_table).option(\"user\", jdbc_username).option(\"password\", jdbc_password).mode(\"overwrite\").save()"
+				]
+			}
+		]
+	}
+}

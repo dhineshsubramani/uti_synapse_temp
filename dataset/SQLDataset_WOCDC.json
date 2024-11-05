@@ -1,0 +1,50 @@
+{
+	"name": "SQLDataset_WOCDC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sqlpocdemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "template_id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "rule_name",
+				"type": "varchar"
+			},
+			{
+				"name": "query",
+				"type": "varchar"
+			},
+			{
+				"name": "result_status",
+				"type": "varchar"
+			},
+			{
+				"name": "result_data",
+				"type": "text"
+			},
+			{
+				"name": "created_at",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "WOCDCCampusDetails"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

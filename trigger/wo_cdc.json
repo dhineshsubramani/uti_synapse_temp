@@ -1,0 +1,25 @@
+{
+	"name": "wo_cdc",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "WO_CDC",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/user/blobs/RAW_WOCDC/",
+			"blobPathEndsWith": ".parquet",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

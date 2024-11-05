@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 22",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [campus_key]\n,[campus_code]\n,[campus_name]\n,[mail_id]\n,[course]\n,[creation_date]\n,[update_date]\n,[Flag]\n,[start_date]\n,[end_date]\n FROM [demonew].[dbo].[campuslatestnew]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "demonew",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

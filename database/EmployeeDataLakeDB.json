@@ -1,0 +1,25 @@
+{
+	"name": "EmployeeDataLakeDB",
+	"properties": {
+		"Name": "EmployeeDataLakeDB",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://user@rgutistr.dfs.core.windows.net/paquet file/employee_history.parquet",
+			"Properties": {
+				"FormatType": "parquet",
+				"LinkedServiceName": "utiadlspoc"
+			}
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 2,
+		"ObjectId": "c0231b1f-897b-4753-8563-c50f95ff47a5"
+	},
+	"type": "DATABASE"
+}

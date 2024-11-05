@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-custstgacct--rgsynutipoc-rgutistr",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr",
+		"groupId": "dfs",
+		"fqdns": [
+			"rgutistr.dfs.core.windows.net"
+		]
+	}
+}

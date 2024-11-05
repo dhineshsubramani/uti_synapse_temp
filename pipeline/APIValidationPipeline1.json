@@ -1,0 +1,339 @@
+{
+	"name": "APIValidationPipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "FetchTemplatesFromBlob",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "TemplatesDataSet",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "TemplateValidations",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "FetchTemplatesFromBlob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": {
+							"value": "application/json",
+							"type": "Expression"
+						}
+					},
+					"url": "https://validateapi.ddns.net/api/validate/execute",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "@activity('FetchTemplatesFromBlob').output.value[0]",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Fetch Validation Results",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "TemplateValidations",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ApiResponse",
+					"value": {
+						"value": "@activity('TemplateValidations').output.Response\n",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Validation Results To Blob",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Fetch Validation Results",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "mydata",
+								"value": {
+									"value": "@variables('ApiResponse')",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "mydata",
+									"type": "String"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 1
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSVInputDataset",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSVOutputDataSet",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Validation Results To SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Validation Results To Blob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['templateId']"
+								},
+								"sink": {
+									"name": "template_id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "$['ruleName']"
+								},
+								"sink": {
+									"name": "rule_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['query']"
+								},
+								"sink": {
+									"name": "query",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['resultStatus']"
+								},
+								"sink": {
+									"name": "result_status",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['resultData']"
+								},
+								"sink": {
+									"name": "result_data",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['createdAt']"
+								},
+								"sink": {
+									"name": "created_at",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "JSONValidationResultDataSet",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQLDataset",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Capture Error Details",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Validation Results To SQL",
+						"dependencyConditions": [
+							"Failed",
+							"Skipped"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "errorDetails",
+					"value": {
+						"value": "@concat(activity('FetchTemplatesFromBlob').error?.message,'|', activity('TemplateValidations')?.error?.message, '|',\nactivity('Validation Results To Blob')?.error?.message, '|',\nactivity('Validation Results To SQL')?.error?.message)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"stage": {
+				"type": "string",
+				"defaultValue": "post-ingestion-cdc"
+			}
+		},
+		"variables": {
+			"ApiResponse": {
+				"type": "String"
+			},
+			"errorDetails": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-11-04T15:42:40Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

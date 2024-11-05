@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 23",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) * FROM [demonew].[dbo].[campuslatestnew]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "demonew",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

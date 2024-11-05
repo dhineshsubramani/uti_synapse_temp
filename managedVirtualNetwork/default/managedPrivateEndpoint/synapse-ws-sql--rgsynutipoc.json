@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-sql--rgsynutipoc",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Synapse/workspaces/rgsynutipoc",
+		"groupId": "sql",
+		"fqdns": [
+			"rgsynutipoc.58f52cf2-d3bd-4249-b453-79e2ff459230.sql.azuresynapse.net"
+		]
+	}
+}

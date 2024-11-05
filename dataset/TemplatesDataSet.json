@@ -1,0 +1,82 @@
+{
+	"name": "TemplatesDataSet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "BasicValidationTemplate.json",
+				"folderPath": {
+					"value": "@concat('ValidationTemplates/', pipeline().parameters.stage)",
+					"type": "Expression"
+				},
+				"container": "user"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"templateId": {
+					"type": "integer"
+				},
+				"templateName": {
+					"type": "string"
+				},
+				"stage": {
+					"type": "string"
+				},
+				"isActive": {
+					"type": "boolean"
+				},
+				"dataSource": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string"
+						},
+						"connection": {
+							"type": "object",
+							"properties": {
+								"jdbcUrl": {
+									"type": "string"
+								},
+								"userName": {
+									"type": "string"
+								},
+								"password": {
+									"type": "null"
+								}
+							}
+						}
+					}
+				},
+				"rules": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"rule": {
+								"type": "string"
+							},
+							"query": {
+								"type": "string"
+							},
+							"fields": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

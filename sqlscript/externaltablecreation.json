@@ -1,0 +1,17 @@
+{
+	"name": "externaltablecreation",
+	"properties": {
+		"content": {
+			"query": "CREATE DATABASE processed;\nGO\n\nUSE processed;\nGO\n\ncreate schema sch;\nGO\n\nCREATE EXTERNAL DATA SOURCE blobconn\nWITH (\n    LOCATION = 'https://rgutistr.blob.core.windows.net/user'\n);\n\nCREATE EXTERNAL FILE FORMAT [ParquetFormat]\nWITH (\n    FORMAT_TYPE = PARQUET\n);\n\n\n\nCREATE EXTERNAL TABLE sch.campusNew (\n\t[campus_key] int,\n\t[campus_code] nvarchar(4000),\n\t[campus_name] nvarchar(4000),\n\t[mail_id] nvarchar(4000),\n\t[course] nvarchar(4000),\n\t[creation_date] datetime2(7),\n\t[update_date] datetime2(7),\n\t[Flag] nvarchar(4000),\n\t[Operations] nvarchar(4000)\n\t)\n\tWITH (\n\tLOCATION = 'Campus/',\n\tDATA_SOURCE = blobconn,\n\tFILE_FORMAT = [ParquetFormat]\n\t)\nGO\n\nselect * from sch.campusNew",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "processed",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

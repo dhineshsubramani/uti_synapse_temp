@@ -1,0 +1,163 @@
+{
+	"name": "WOCDC_Incremental",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "53eabcd1-52ec-4e71-bc3f-83bb8f4af8fe"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import SparkSession\n",
+					"from pyspark.sql import Row\n",
+					"from pyspark.sql import *\n",
+					"from pyspark.sql.functions import *\n",
+					"from pyspark.sql.types import *\n",
+					"from pyspark.sql import functions as F\n",
+					"from pyspark.sql import Window\n",
+					"from datetime import datetime"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df = spark.read.load('abfss://user@rgutistr.dfs.core.windows.net/RAW_WOCDC/*.parquet', format='parquet')\n",
+					"windowSpec = Window.partitionBy(\"campus_key\", \"campus_code\").orderBy(col(\"update_date\").desc())\n",
+					" \n",
+					"# Mark the latest record in each partition\n",
+					"df_updated1 = df.withColumn(\"Flag\", when(row_number().over(windowSpec) == 1, \"Y\").otherwise(\"N\"))\n",
+					" \n",
+					"# Sort by start_lsn in ascending order\n",
+					"df_sort1 = df_updated1.sort(col(\"update_date\").asc())\n",
+					" \n",
+					" \n",
+					"# Example: Course update from 'Course A' to 'Course H'\n",
+					"df_operation1 = df_sort1.withColumn(\"start_date\", lit(current_date())) \\\n",
+					"                           .withColumn(\"end_date\", expr(\"date_add('9999-12-31', 0)\"))"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_operation1.createOrReplaceTempView(\n",
+					"\"demoWOCDC\"\n",
+					")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"CONVERT TO DELTA demonew.campuslatestnew;"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.sql(\"\"\"\n",
+					"              MERGE INTO demonew.campuslatestnew AS target\n",
+					"              USING (SELECT campus_key, campus_code, start_date, end_date FROM demoWOCDC) AS source\n",
+					"              ON target.campus_key = source.campus_key\n",
+					"              AND target.campus_code = source.campus_code\n",
+					"              WHEN MATCHED THEN\n",
+					"                UPDATE SET\n",
+					"                  target.Flag = 'N',\n",
+					"                  target.end_date = DATE_SUB(source.start_date, 1);\n",
+					"\"\"\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.sql(\"\"\"\n",
+					"    INSERT INTO demonew.campuslatestnew\n",
+					"    SELECT campus_key, campus_code, campus_name, mail_id, course, creation_date, update_date, Flag, start_date, end_date\n",
+					"    FROM demoWOCDC\n",
+					"\"\"\")"
+				]
+			}
+		]
+	}
+}
