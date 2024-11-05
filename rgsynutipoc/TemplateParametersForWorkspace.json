@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "rgsynutipoc"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorage2_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
+		"LS_BlobStorage_connectionString": {
+			"value": ""
+		},
+		"rgsynutipoc-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:rgsynutipoc.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"sqlpocdemo_password": {
+			"value": ""
+		},
+		"utiadlspoc_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://rgutistr.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://rgutistr.dfs.core.windows.net/"
+		},
+		"rgsynutipoc-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://rgutistr.dfs.core.windows.net"
+		},
+		"sqlpocdemo_properties_typeProperties_server": {
+			"value": "rgemutipoc.database.windows.net"
+		},
+		"sqlpocdemo_properties_typeProperties_database": {
+			"value": "rgemsqlpoc"
+		},
+		"sqlpocdemo_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"utiadlspoc_properties_typeProperties_url": {
+			"value": "https://rgutistr.dfs.core.windows.net/"
+		},
+		"CDC_properties_typeProperties_scope": {
+			"value": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
+		},
+		"wo_cdc_properties_typeProperties_scope": {
+			"value": "/subscriptions/3abb7399-eedb-4a6d-9184-65148f6c282e/resourceGroups/bicep-uti-poc/providers/Microsoft.Storage/storageAccounts/rgutistr"
+		}
+	}
+}
