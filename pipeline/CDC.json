@@ -29,12 +29,12 @@
 						"type": "NotebookReference"
 					},
 					"snapshot": true,
-					"sparkPool": {
-						"referenceName": "UTIPOC1",
-						"type": "BigDataPoolReference"
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
 					},
-					"executorSize": "Small",
-					"driverSize": "Small"
+					"numExecutors": null
 				}
 			},
 			{
@@ -114,7 +114,13 @@
 						"type": "BigDataPoolReference"
 					},
 					"executorSize": "Small",
-					"driverSize": "Small"
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
 				}
 			},
 			{
@@ -192,7 +198,13 @@
 						"type": "BigDataPoolReference"
 					},
 					"executorSize": "Small",
-					"driverSize": "Small"
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
 				}
 			},
 			{
